@@ -1,0 +1,10 @@
+version: "3.3"
+
+services:
+    ctc2023-misc-example-challenge-ctf-ssh:
+        container_name: ctc2023-misc-example-challenge-ctf-ssh
+        image: ghcr.io/challengethecyber/ctc2023-misc-example-challenge_ctf-ssh:latest
+        ports:
+            - "22:22"
+        labels:
+            kompose.service.type: nodeport
