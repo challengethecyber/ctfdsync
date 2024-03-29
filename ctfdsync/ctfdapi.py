@@ -14,6 +14,7 @@ class CtfdApi(requests.Session):
 		assert self.ctfd_token is not None, "Missing CTFD_TOKEN"
 
 		self.headers.update({"Authorization": f"Token {self.ctfd_token}"})
+		# need a check for correct authorization here.
 		
 	def request(self, method, url, *args, **kwargs):
 		url_start = self.prefix_url

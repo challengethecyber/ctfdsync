@@ -1,0 +1,28 @@
+challenge_name: my-misc-challenge # [a-zA-Z0-9\-]
+
+challenge_author: cedric
+
+challenge_description: |-
+  This is a misc challenge
+
+challenge_tasks:
+  - task_name: firsttask # [a-zA-Z0-9\-]
+    task_description: a description
+    task_flag: CTF{bla}
+    task_flag_isregex: false
+    task_points: 1
+    task_tags: [web, infra]
+    task_maxattempts: 100
+    task_difficulty: easy
+
+  - task_name: secondtask  # [a-zA-Z0-9\-]
+    task_description: a second description
+    task_flag: CTF{bla}
+    task_flag_isregex: false
+    task_points: 2
+    task_tags: [web, infra]
+    task_maxattempts: 100
+    task_difficulty: medium
+
+challenge_files: [test.png, test_image.png]
+challenge_backend: infra # one of [web|infra|none]
