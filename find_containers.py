@@ -20,7 +20,7 @@ for challdir in challdirs:
     assert challdir.exists()
 
     git_challenge_dir = challdir.name
-    assert git_challenge_dir.startswith("ctc2023-")
+    assert git_challenge_dir.startswith("ctc2024-")
 
     if (challdir / ".ctfignore").exists():
         continue

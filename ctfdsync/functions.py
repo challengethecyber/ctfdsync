@@ -1,7 +1,20 @@
 from ctfdsync.ctfdapi import CtfdApi
 from ctfdsync.models import *
+from pathlib import Path
 
 ctfdapi = CtfdApi()
+
+def get_global_config(pathhint: Path):
+	testpath: Path = pathhint.resolve()
+	assert testpath.is_dir()
+
+	found_config = None
+	for p in [testpath, testpath.parent, testpath.parent.parent]:
+		if (p / "ctfdsync.yaml").exists():
+			found_config = p / "ctfdsync.yaml"
+
+	assert found_config
+	return CtfdSyncConfig.from_yaml(found_config)
 
 def create_placeholder_challenge():
 	new_challenge = {

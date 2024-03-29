@@ -11,7 +11,7 @@ challdir = Path(args.git_challenge_dir)
 assert challdir.exists()
 
 git_challenge_dir = challdir.name
-assert git_challenge_dir.startswith("ctc2023-")
+assert git_challenge_dir.startswith("ctc2024-")
 
 assert not (challdir / "docker-compose.yml").exists(), "docker-compose extension should be .yaml for consistency"
 yamlfile = challdir / "docker-compose.yaml"

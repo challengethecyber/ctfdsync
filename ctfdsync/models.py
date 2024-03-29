@@ -3,6 +3,49 @@ import re
 import yaml
 from pathlib import Path, PurePosixPath
 
+TaskPointsModeType = enum.Enum("TaskPointsModeType", ['Dynamic', 'Static'])
+
+class CtfdSyncConfig:
+	def __init__(self):
+		pass
+		
+	@classmethod
+	def from_yaml(cls, yamlfile: Path):
+		yamlfile = yamlfile.resolve()
+		assert yamlfile.exists()
+		yml = yaml.safe_load(yamlfile.open())
+		
+		new = cls()
+		
+		assert 'task_config' in yml
+		new.task_config = CtfdSyncTaskConfig.from_yaml_object(yml['task_config'])
+
+		return new
+
+class CtfdSyncTaskConfig:
+	def __init__(self):
+		pass
+	
+	@classmethod
+	def from_yaml_object(cls, obj):
+		new = cls()
+
+		assert obj['task_points_mode'] in map(lambda m: m.name.lower(), TaskPointsModeType)
+		new.task_points_mode = TaskPointsModeType[obj['task_points_mode'].capitalize()]
+
+		if new.task_points_mode == TaskPointsModeType.Dynamic:
+			assert type(obj['task_points_default_decay']) == int and obj['task_points_default_decay'] > 0
+			new.task_points_default_decay = obj['task_points_default_decay']
+
+			assert type(obj['task_points_default_initial']) == int and obj['task_points_default_initial'] > 0
+			new.task_points_default_initial = obj['task_points_default_initial']
+
+			assert type(obj['task_points_default_minimum']) == int and obj['task_points_default_minimum'] > 0
+			new.task_points_default_minimum = obj['task_points_default_minimum']
+
+		return new
+
+
 class Challenge:
 	def __init__(self):
 		pass
@@ -94,8 +137,9 @@ class ChallengeTask:
 		assert type(obj['task_flag_isregex']) == bool
 		new.task_flag_isregex = obj['task_flag_isregex']
 		
-		assert type(obj['task_points']) == int and obj['task_points'] > 0
-		new.task_points = obj['task_points']
+		if 'task_points' in obj: # not a required arguments when operating in dynamic mode
+			assert type(obj['task_points']) == int and obj['task_points'] > 0
+			new.task_points = obj['task_points']
 		
 		assert type(obj['task_tags']) == list
 		assert all([type(i) == str for i in obj['task_tags']])

@@ -14,11 +14,12 @@ challdir = Path(args.git_challenge_dir)
 assert challdir.exists()
 
 git_challenge_dir = challdir.name
-assert git_challenge_dir.startswith("ctc2023-")
+assert git_challenge_dir.startswith("ctc2024-")
 
 yamlfile = challdir / "challenge.yaml"
 assert yamlfile.exists()
 
+global_config = get_global_config(challdir)
 challenge = Challenge.from_yaml(yamlfile)
 dirty = False
 
@@ -48,19 +49,29 @@ if dirty:
 	
 challenge.map_ctms(mappings)
 
+global_task_config: CtfdSyncTaskConfig = global_config.task_config
+
 for task_id, challtask in enumerate(challenge.challenge_tasks, 1):
 	ctm = challtask.task_ctm
 	
 	indented_chall_desc = "\r\n".join(["> " + sl for sl in challenge.challenge_description.splitlines()])
 	combined_description = f"{indented_chall_desc}    \r\n    \r\n{challtask.task_description}"
+
+	if global_task_config.task_points_mode == TaskPointsModeType.Static:
+		moded_task_points = challtask.task_points
+	elif global_task_config.task_points_mode == TaskPointsModeType.Dynamic:
+		moded_task_points = global_task_config.task_points_default_initial
+		moded_task_initial = global_task_config.task_points_default_initial
+		moded_task_minimum = global_task_config.task_points_default_minimum
+		moded_task_decay = global_task_config.task_points_default_decay
 	
 	update_json = {
 		"category": challenge.challenge_name,
 		"name": challtask.task_name,
-		"value": str(challtask.task_points),
-		"initial": str(challtask.task_points),
-		"minimum": str(challtask.task_points),
-		"decay": "0",
+		"value": str(moded_task_points),
+		"initial": str(moded_task_initial),
+		"minimum": str(moded_task_minimum),
+		"decay": str(moded_task_decay),
 		"max_attempts": str(challtask.task_maxattempts),
 		"description": combined_description,
 		"state": "visible"
